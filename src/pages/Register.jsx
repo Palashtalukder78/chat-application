@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import logoImage from "../assets/images/lws-logo-light.svg";
+import logoImage from "../assets/images/logo.png";
 
 export default function Register() {
     return (
@@ -9,9 +9,9 @@ export default function Register() {
                     <div>
                         <Link to="/">
                             <img
-                                className="mx-auto h-12 w-auto"
+                                className="mx-auto h-20 w-auto"
                                 src={logoImage}
-                                alt="Learn with sumit"
+                                alt="Chat with Palash"
                             />
                         </Link>
                         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">

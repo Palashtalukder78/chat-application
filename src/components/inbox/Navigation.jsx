@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import logoImage from "../../assets/images/lws-logo-dark.svg";
+import logoImage from "../../assets/images/logo-nav.png";
 
 export default function Navigation() {
     return (
