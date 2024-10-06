@@ -2,9 +2,15 @@
   "users": [
     {
       "email": "mdarifulislampalash89@gmail.com",
-      "password": "$2a$10$ZcMfllsrRFZXArefUXB3jOh2fusf9wIUY98aJeHDdLLU4pMvm4NHC",
-      "name": "Md Ariful Islam",
+      "password": "$2a$10$vhTuLbiDWbFU0ra4usdfBOc8xQrzfrerjrZ5C5LPFWyCEHMQ1tt2y",
+      "name": "Md Ariful Islam ",
       "id": 1
+    },
+    {
+      "email": "test1@gmail.com",
+      "password": "$2a$10$Fe8BSpmW.oNWxwMoesH9nOMPf5mrHGInAY70LWMElHZVg81vJmbEO",
+      "name": "Palash Talukder",
+      "id": 2
     }
   ],
   "conversations": [
