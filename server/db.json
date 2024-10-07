@@ -15,7 +15,7 @@
   ],
   "conversations": [
     {
-      "participants": "mdarifulislampalash89@gmail.com-sumit@learnwithsumit.com",
+      "participants": "mdarifulislampalash89@gmail.com-test1@gmail.com",
       "users": [
         {
           "email": "mdarifulislampalash89@gmail.com",
@@ -23,13 +23,12 @@
           "id": 1
         },
         {
-          "email": "sumit@learnwithsumit.com",
-          "password": "$2a$10$CtHS.yCGS80jiuZx8yKEI.5zdiZykHF/6aPTDqpHl6ZqEFGISOHKO",
-          "name": "Sumit Saha",
+          "email": "test1@gmail.com",
+          "name": "Palash Talukder",
           "id": 2
         }
       ],
-      "message": "hi",
+      "message": "hello",
       "timestamp": 1726465882024,
       "id": 1
     }
