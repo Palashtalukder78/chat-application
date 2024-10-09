@@ -34,7 +34,6 @@ export default function Modal({ open, control }) {
       )
         .unwrap()
         .then((data) => {
-          console.log(data)
           setConversation(data);
         })
         .catch((err) => {
@@ -71,12 +70,11 @@ export default function Modal({ open, control }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Conversation", conversation);
-    console.log("Number of Conversation", conversation?.length);
     if (conversation?.length > 0) {
       //edit conversation
       editConversation({
         id: conversation[0]?.id,
+        sender: myEmail,
         data: {
           participants: `${myEmail}-${participant[0].email}`,
           users: [loggedInUSer, participant[0]],
@@ -87,14 +85,22 @@ export default function Modal({ open, control }) {
     } else if (conversation?.length === 0) {
       //add Conversation
       addConversation({
-        participants: `${myEmail}-${participant[0].email}`,
-        users: [loggedInUSer, participant[0]],
-        message,
-        timestamp: new Date().getTime(),
+        sender: myEmail,
+        data: {
+          participants: `${myEmail}-${participant[0].email}`,
+          users: [loggedInUSer, participant[0]],
+          message,
+          timestamp: new Date().getTime(),
+        },
       });
     }
   };
-  
+  useEffect(() => {
+    if (successAddConversation || successEditConversation) {
+      control();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [successAddConversation, successEditConversation]);
   return (
     open && (
       <>
