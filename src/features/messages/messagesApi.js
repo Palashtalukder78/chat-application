@@ -8,7 +8,14 @@ const messagesApi = apiSlice.injectEndpoints({
           import.meta.env.VITE_CONVERSATION_PER_PAGE
         }`,
     }),
+    addMessage: builder.mutation({
+      query: (data) => ({
+        url: "/messages",
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
-export const {useGetMessagesQuery} = messagesApi;
+export const {useGetMessagesQuery, useAddMessageMutation} = messagesApi;
