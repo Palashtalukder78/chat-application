@@ -46,22 +46,42 @@ export const conversationsApi = apiSlice.injectEndpoints({
         body: data,
       }),
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
-        const conversation = await queryFulfilled;
-        if (conversation?.data?.id) {
-          const users = arg?.data?.users;
-          const senderInfo = users?.find((user) => user?.email === arg?.sender);
-          const recieverInfo = users?.find(
-            (user) => user?.email !== arg?.sender
-          );
-          dispatch(
-            messagesApi.endpoints.addMessage.initiate({
-              conversationId: conversation?.data?.id,
-              sender: senderInfo,
-              receiver: recieverInfo,
-              message: arg?.data?.message,
-              timestamp: arg?.data?.timestamp,
-            })
-          );
+        //Optimistake update start
+        const patchResult1 = dispatch(
+          apiSlice.util.updateQueryData(
+            "getConversations",
+            arg.sender,
+            (draft) => {
+              const draftConversation = draft.find((c) => c.id == arg.id);
+              draftConversation.message = arg.data.message;
+              draftConversation.timestamp = arg.data.timeStamp;
+            }
+          )
+        );
+        //Optimistake update end
+
+        try {
+          const conversation = await queryFulfilled;
+          if (conversation?.data?.id) {
+            const users = arg?.data?.users;
+            const senderInfo = users?.find(
+              (user) => user?.email === arg?.sender
+            );
+            const recieverInfo = users?.find(
+              (user) => user?.email !== arg?.sender
+            );
+            dispatch(
+              messagesApi.endpoints.addMessage.initiate({
+                conversationId: conversation?.data?.id,
+                sender: senderInfo,
+                receiver: recieverInfo,
+                message: arg?.data?.message,
+                timestamp: arg?.data?.timestamp,
+              })
+            );
+          }
+        } catch (error) {
+          patchResult1.undo();
         }
       },
     }),
