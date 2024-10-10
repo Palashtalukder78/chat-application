@@ -88,7 +88,8 @@ export const conversationsApi = apiSlice.injectEndpoints({
             const recieverInfo = users?.find(
               (user) => user?.email !== arg?.sender
             );
-            dispatch(
+
+            const res = await dispatch(
               messagesApi.endpoints.addMessage.initiate({
                 conversationId: conversation?.data?.id,
                 sender: senderInfo,
@@ -96,7 +97,19 @@ export const conversationsApi = apiSlice.injectEndpoints({
                 message: arg?.data?.message,
                 timestamp: arg?.data?.timestamp,
               })
+            )
+            .unwrap()
+            //Presimitically cache update start
+            dispatch(
+              apiSlice.util.updateQueryData(
+                "getMessages",
+                res.conversationId.toString(),
+                (draft) => {
+                  draft.push(res);
+                }
+              )
             );
+            //Presimitically cache update end
           }
         } catch (error) {
           patchResult1.undo();
