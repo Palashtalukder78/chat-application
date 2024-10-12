@@ -120,6 +120,30 @@ export const conversationsApi = apiSlice.injectEndpoints({
               (user) => user?.email !== arg?.sender
             );
 
+            //Modifition start
+            dispatch(
+              apiSlice.util.updateQueryData(
+                "getMessages",
+                conversation?.data?.id.toString(),
+                (draft) => {
+                  draft.push(conversation);
+                }
+              )
+            );
+            try {
+              const res = await dispatch(
+                messagesApi.endpoints.addMessage.initiate({
+                  conversationId: conversation?.data?.id,
+                  sender: senderInfo,
+                  receiver: recieverInfo,
+                  message: arg?.data?.message,
+                  timestamp: arg?.data?.timestamp,
+                })
+              );
+            } catch (error) {}
+            //Modifition end
+
+            /* //It's modified upper
             const res = await dispatch(
               messagesApi.endpoints.addMessage.initiate({
                 conversationId: conversation?.data?.id,
@@ -128,7 +152,7 @@ export const conversationsApi = apiSlice.injectEndpoints({
                 message: arg?.data?.message,
                 timestamp: arg?.data?.timestamp,
               })
-            ).unwrap();
+            ).unwrap(); 
             //Presimitically cache update start
             dispatch(
               apiSlice.util.updateQueryData(
@@ -138,8 +162,8 @@ export const conversationsApi = apiSlice.injectEndpoints({
                   draft.push(res);
                 }
               )
-            );
-            //Presimitically cache update end
+            ); 
+            //Presimitically cache update end */
           }
         } catch (error) {
           patchResult1.undo();
