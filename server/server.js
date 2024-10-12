@@ -11,6 +11,20 @@ const io = require('socket.io')(server);
 global.io = io;
 
 const router = jsonServer.router("db.json");
+//Response Middleware for using socket io
+router.render= (req, res)=>{
+    const path = req.path;
+    const method = req.method;
+    //For conversations
+    if(path.includes('/conversations') && (method === 'POST' || method === "PATCH")){
+        //Emmiting socket events
+        io.emit("conversation", {
+          data: res.locals.data,
+        });
+    }
+    res.json(res.locals.data)
+}
+
 const middlewares = jsonServer.defaults();
 const port = process.env.PORT || 9000;
 
