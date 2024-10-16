@@ -38,9 +38,8 @@ export const messagesApi = apiSlice.injectEndpoints({
               }
             });
           });
-        } catch (error) {
-          console.error("Socket error:", error); // Log any errors that occur
-        } finally {
+        } catch (error) {} 
+        finally {
           // Cleanup: remove the listener and close the socket
           await cacheEntryRemoved;
           socket.off("message"); // Remove the listener

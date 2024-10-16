@@ -10,6 +10,14 @@ export const conversationsApi = apiSlice.injectEndpoints({
         `conversations?participants_like=${email}&_sort=timestamp&_order=desc&_page=1&_limit=${
           import.meta.env.VITE_CONVERSATION_PER_PAGE
         }`,
+      //For infinity scrolling
+      transformResponse(apiResponse, meta) {
+        const totalCount = meta.response.headers.get("X-Total-Count");
+        return {
+          data: apiResponse,
+          totalCount
+        }
+      },
       //Socketing
       async onCacheEntryAdded(
         arg,
@@ -41,6 +49,35 @@ export const conversationsApi = apiSlice.injectEndpoints({
         socket.close();
       },
     }),
+
+    getMoreConversations: builder.query({
+      query: ({ email, page }) =>
+        `conversations?participants_like=${email}&_sort=timestamp&_order=desc&_page=${page}&_limit=${
+          import.meta.env.VITE_CONVERSATION_PER_PAGE
+        }`,
+      async onQueryStarted({ email }, { queryFulfilled, dispatch }) {
+        try {
+          const conversations = await queryFulfilled;
+          if (conversations?.data?.length > 0) {
+            //Pessimistically conversations cache update start
+            dispatch(
+              apiSlice.util.updateQueryData(
+                "getConversations",
+                email,
+                (draft) => {
+                  return {
+                    data: [...draft.data, ...conversations.data],
+                    totalCount: Number(draft.totalCount),
+                  };
+                }
+              )
+            );
+            //Presimitically cache update end
+          }
+        } catch (error) {}
+      },
+    }),
+
     getConversation: builder.query({
       query: ({ userEmail, participantEmail }) =>
         `conversations?participants_like=${userEmail}-${participantEmail}&&participants_like=${participantEmail}-${userEmail}`,
@@ -101,7 +138,7 @@ export const conversationsApi = apiSlice.injectEndpoints({
             "getConversations",
             arg.sender,
             (draft) => {
-              const draftConversation = draft.find((c) => c.id == arg.id);
+              const draftConversation = draft.data.find((c) => c.id == arg.id);
               draftConversation.message = arg.data.message;
               draftConversation.timestamp = arg.data.timeStamp;
             }
