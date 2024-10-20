@@ -37,7 +37,6 @@ export const conversationsApi = apiSlice.injectEndpoints({
           await cacheDataLoaded;
           socket.on("conversation", (data) => {
             updateCachedData((draft) => {
-              console.log('DRAFT', JSON.stringify(draft))
               const conversation = draft.data.find((c) => c.id == data?.data?.id);
               if (conversation?.id) {
                 conversation.message = data.data.message;
@@ -90,10 +89,8 @@ export const conversationsApi = apiSlice.injectEndpoints({
         body: data,
       }),
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
-        console.log("ARG", arg)  
         try {
           const conversation = await queryFulfilled;
-          console.log("SENDER", arg.sender);
           if (conversation?.data?.id) {
             const users = arg?.data?.users;
             const senderInfo = users?.find(
@@ -161,12 +158,22 @@ export const conversationsApi = apiSlice.injectEndpoints({
             );
 
             //Modifition start
-            dispatch(
+            const optimisticCache = dispatch(
               apiSlice.util.updateQueryData(
                 "getMessages",
                 conversation?.data?.id.toString(),
                 (draft) => {
-                  draft.push(conversation);
+                  // draft.push(conversation);//It was also okay
+                  //for clean console error start
+                  const cleanedConversation = {
+                    ...conversation.data,
+                    meta: {
+                      ...conversation.data.meta,
+                      request: undefined, // Exclude the 'request' field or other non-serializable fields
+                    },
+                  };
+                  draft.push(cleanedConversation);
+                  //for clean console error End
                 }
               )
             );
@@ -180,7 +187,9 @@ export const conversationsApi = apiSlice.injectEndpoints({
                   timestamp: arg?.data?.timestamp,
                 })
               );
-            } catch (error) {}
+            } catch (error) {
+              optimisticCache.undo();
+            }
             //Modifition end
 
             /* //It's modified upper
