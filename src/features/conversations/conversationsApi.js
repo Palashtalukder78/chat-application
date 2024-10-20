@@ -90,8 +90,10 @@ export const conversationsApi = apiSlice.injectEndpoints({
         body: data,
       }),
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+        console.log("ARG", arg)  
         try {
           const conversation = await queryFulfilled;
+          console.log("SENDER", arg.sender);
           if (conversation?.data?.id) {
             const users = arg?.data?.users;
             const senderInfo = users?.find(
@@ -106,7 +108,7 @@ export const conversationsApi = apiSlice.injectEndpoints({
                 "getConversations",
                 arg.sender,
                 (draft) => {
-                  draft.push(conversation.data); // Update cache with the new conversation
+                  draft.data.push(conversation.data); // Update cache with the new conversation
                 }
               )
             );
