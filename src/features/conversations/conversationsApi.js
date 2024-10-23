@@ -24,7 +24,7 @@ export const conversationsApi = apiSlice.injectEndpoints({
         { updateCachedData, cacheDataLoaded, cacheEntryRemoved }
       ) {
         //Create socket
-        const socket = io("http://localhost:9000", {
+        const socket = io("https://chat-app-server-sie3.onrender.com/", {
           reconnectionDelay: 1000,
           reconnection: true,
           reconnectionAttempts: 10,
@@ -164,7 +164,7 @@ export const conversationsApi = apiSlice.injectEndpoints({
                 conversation?.data?.id.toString(),
                 (draft) => {
                   // draft.push(conversation);//It was also okay
-                  //for clean console error start
+                  //for clean console error(Serialization) start
                   const cleanedConversation = {
                     ...conversation.data,
                     meta: {
